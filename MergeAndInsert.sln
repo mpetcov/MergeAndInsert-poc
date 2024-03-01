@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeAndInsert", "MergeAndInsert.csproj", "{C1C5C341-5D27-4444-877F-C965CE58469E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1C5C341-5D27-4444-877F-C965CE58469E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1C5C341-5D27-4444-877F-C965CE58469E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1C5C341-5D27-4444-877F-C965CE58469E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1C5C341-5D27-4444-877F-C965CE58469E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E9D9C2BB-9CE9-4E92-BA1E-A769B4ED5989}
+	EndGlobalSection
+EndGlobal
