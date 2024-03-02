@@ -1,5 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
+using LinqToDB;
+using LinqToDB.EntityFrameworkCore;
 using MergeAndInsert.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +89,48 @@ namespace MergeAndInsert
                 };
 
                 dbContext.Database.ExecuteSqlRaw(sql, parameters);
+            }
+        }
+
+        [Benchmark]
+        public void WithLinq2Db()
+        {
+            WithLinq2Db(Guid.Empty);
+            WithLinq2Db(Guid.NewGuid());
+        }
+        private void WithLinq2Db(Guid traceId)
+        {
+            using var context = new MergeAndInsertContext();
+            {
+                var source = new[]
+                {
+                    new ParentTable {TraceId = traceId, Description = "WithLinq2Db"},
+                };
+
+                var insertedIds = context.ParentTables
+                    .ToLinqToDB()
+                    .Merge()
+                    .Using(source)
+                    .On((t, s) => t.TraceId == s.TraceId)
+                    .InsertWhenNotMatched(s => new ParentTable
+                    {
+                        TraceId = s.TraceId,
+                        Description = s.Description,
+                        SomeDateTimeUtc = Sql.CurrentTimestampUtc
+                    })
+                    .UpdateWhenMatched((t, s) => new ParentTable
+                    {
+                        TraceId = t.TraceId,
+                    })
+                    .MergeWithOutput((a, deleted, inserted) => inserted.Id)
+                    .ToList();
+
+                context.ChildTables.ToLinqToDBTable().Insert(() => new ChildTable
+                {
+                    ParentTableId = insertedIds[0],
+                    SomeMessage = "WithLinq2Db",
+                    StatusDateTimeUtc = Sql.CurrentTimestampUtc
+                });
             }
         }
 
