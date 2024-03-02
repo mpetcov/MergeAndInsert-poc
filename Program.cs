@@ -1,4 +1,5 @@
-﻿using MergeAndInsert.Data;
+﻿using BenchmarkDotNet.Running;
+using MergeAndInsert.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace MergeAndInsert
@@ -7,21 +8,21 @@ namespace MergeAndInsert
     {
         static void Main(string[] args)
         {
-            using(var db = new MergeAndInsertContext())
-            {
-                var data= db.ParentTables.Include(t=> t.ChildTables).ToList();
+            ResetDatabase();
 
-                foreach(var pt in data)
-                {
-                    Console.WriteLine($"{pt.Id},\t{pt.TraceId},\t{pt.Description},\t{pt.SomeDateTimeUtc}");
-                    foreach(var ct in pt.ChildTables)
-                    {
-                        Console.WriteLine($"{ct.Id},\t{ct.ParentTableId},\t{ct.SomeMessage},\t{ct.StatusDateTimeUtc}");
-                    }
-                }
+            BenchmarkRunner.Run<MergeAndInsertBenchmarks>();
+        }
+
+        static void ResetDatabase()
+        {
+            using (var dbContext = new MergeAndInsertContext())
+            {
+                var sql = $@"DELETE FROM [dbo].[ChildTable];
+                            DELETE FROM [dbo].[ParentTable];
+                            INSERT INTO [dbo].[ParentTable] (TraceId, Description, SomeDateTimeUtc) 
+                            VALUES ('{Guid.Empty}', 'Initial Parent Seed', GETUTCDATE());";
+                dbContext.Database.ExecuteSqlRaw(sql);
             }
-            Console.WriteLine("ALL DONE!");
-            Console.ReadKey();
         }
     }
 }
